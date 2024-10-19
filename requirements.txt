@@ -1,0 +1,13 @@
+# pip install -r requirements.txt
+# desinstalar todo pip3 freeze | xargs pip3 uninstall -y
+# Comando para reiniciar la pagina S+cmd + P --> reload window
+
+
+flask
+flask-bootstrap
+flask-wtf
+flask-testing
+pandas
+matplotlib
+plotly
+paho.mqtt

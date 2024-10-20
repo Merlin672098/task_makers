@@ -1,64 +1,127 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-        #welcome-container {
-            width: 400px;
-            height: 600px;
-            background-color: #fff;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-        #welcome-header {
-            background-color: #007bff;
-            color: white;
-            padding: 20px;
-            text-align: center;
-            font-size: 24px;
-            border-top-left-radius: 10px;
-            border-top-right-radius: 10px;
-            width: 100%;
-        }
-        #welcome-button {
-            background-color: #007bff;
-            color: white;
-            padding: 15px 30px;
-            font-size: 18px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-top: 20px;
-        }
-        #welcome-button:hover {
-            background-color: #0056b3;
-        }
-    </style>
-</head>
-<body>
+<div class="menu-btn">
+    <i class="fas fa-bars fa-2x"></i>
+  </div>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css')}}">
+  <div class="container">
+    <!-- Nav -->
+    <nav class="main-nav">
+      <img src="/static/css/makers.png" height="300%" >
 
-    <div id="welcome-container">
-        <div id="welcome-header">Bienvenido</div>
-        <!-- Usamos el enlace de Flask para redirigir -->
-        <a href="{{ url_for('chatbot') }}">
-            <button id="welcome-button">Ir al Chatbot</button>
+      <ul class="main-menu">
+        <li><a href="#">Products</a></li>
+        <li><a href="#">New arrivals</a></li>
+        <li><a href="#">About Us</a></li>
+        <li><a href="#">Deals</a></li>
+        <li><a href="{{url_for('chatbot')}}">Support</a></li>
+      </ul>
+      
+      <ul class="right-menu">
+        <li>
+          <a href="#">
+            <i class="fas fa-search"></i>
+          </a>
+        </li>
+        <li>
+          <a href="#">
+            <i class="fas fa-shopping-cart"></i>
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- Showcase -->
+    <header class="showcase">
+      <h2>Product Deals</h2>
+      <p>
+        Select products are on sale now - save while supplies last
+      </p>
+      <a href="#" class="btn">
+        Shop Now <i class="fas fa-chevron-right"></i>
+      </a>
+    </header>
+
+    <!-- Home cards 1 -->
+    <section class="home-cards">
+      <div>
+        <img src="https://i.ibb.co/LZPVKq9/card1.png" alt="" class="borde">
+        <h3>New Surface Pro 7</h3>
+        <p>
+          See how Katie Sowers, Asst. Coach for the 49ers, uses Surface Pro 7
+						to put her plans into play.
+        </p>
+        <a href="#">Learn More <i class="fas fa-chevron-right"></i></a>
+      </div>
+      <div>
+        <img src="https://i.ibb.co/KjGFHVJ/card2.png" alt="" class="borde"/>
+        <h3>New Office Laptop</h3>
+        <p>
+          Express yourself powerfully with a thin, light, and elegant design,
+          faster performance, and up to 11.5 hours battery life.
+        </p>
+        <a href="#">Learn More <i class="fas fa-chevron-right"></i></a>
+      </div>
+      <div>
+        <img src="https://i.ibb.co/2cnshH6/card3.png" alt="" class="borde"/>
+        <h3>Save $150 + free controller</h3>
+        <p>
+          Buy an Xbox One X console and double your fun with a free select
+          extra controller. Starting at $349.
+        </p>
+        <a href="#">Learn More <i class="fas fa-chevron-right"></i></a>
+      </div>
+      <div>
+        <img src="/static/css/chatbot.png" alt="" class="borde"/>
+        <h3>Try Our New CHATBOT</h3>
+        <p>
+          Found the answers to all the questions anytime, try steve is now active
+        </p>
+        <a href="{{url_for('chatbot')}}">Learn More <i class="fas fa-chevron-right"></i></a>
+      </div>
+    </section>
+
+    <!-- Xbox -->
+      
+      <!-- Carbon -->
+      <section class="carbon dark">
+        <div class="content">
+          <h2>Commiting To Carbon Negative</h2>
+          <p>Makers Tech will be carbon negative by 2030 and by 2050 we will remove
+            all carbon the company has emitted since it was founded in 1975</p>
+            <a href="#" class="btn">
+              Learn More <i class="fas fa-chevron-right"></i>
+            </a>
+        </div>
+      </section>
+
+      <!-- Follow -->
+      <section class="follow">
+        <p>Follow Makers Tech</p>
+        <a href="https://facebook.com">
+          <img src="https://i.ibb.co/LrVMXNR/social-fb.png" alt="Facebook" class="bordes">
         </a>
+        <a href="https://twitter.com">
+          <img src="https://i.ibb.co/vJvbLwm/social-twitter.png" alt="Twitter" class="bordes">
+        </a>
+        <a href="https://linkedin.com">
+          <img src="https://i.ibb.co/b30HMhR/social-linkedin.png" alt="Linkedin" class="bordes">
+        </a>
+      </section>
     </div>
-
-</body>
-</html>
+      <!-- Links -->
+       
+      <!-- Footer -->
+      <footer class="footer">
+        <div class="footer-inner">
+          <div><i class="fas fa-globe fa-2x"></i> English (United States)</div>
+          <ul>
+            <li><a href="#">Sitemap</a></li>
+					<li><a href="#">Contact Makers Tech</a></li>
+					<li><a href="#">Privacy & cookies</a></li>
+					<li><a href="#">Terms of use</a></li>
+					<li><a href="#">Trademarks</a></li>
+					<li><a href="#">Safety & eco</a></li>
+					<li><a href="#">About our ads</a></li>
+					<li><a href="#">&copy; Makers Tech 2024</a></li>
+          </ul>
+        </div>
+      </footer>

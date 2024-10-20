@@ -165,8 +165,8 @@ def chatbot():
     sql_query = "SELECT * FROM productos;"
     result = query(sql_query)
 
-    return {"message": "Welcome", "schema": schema, "result": result}
-
+    return render_template('/chatbot.html', schema=schema, result=result)
+#message": "Welcome", "schema": schema, "result": result
 #cualquier cosa
 @app.route("/")
 def read_root():

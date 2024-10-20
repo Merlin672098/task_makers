@@ -21,39 +21,36 @@ load_dotenv()
 
 logger = logging.getLogger(__name__)
 
-BACKEND_SERVER = os.getenv("SERVER_URL")
+BACKEND_SERVER = ("http://localhost:8000")
 
 app = FastAPI(servers=[{"url": BACKEND_SERVER}])
 
-DIALOGFLOW_PROJECT_ID = os.getenv("DIALOGFLOW_PROJECT_ID")
+DIALOGFLOW_PROJECT_ID = ("fresh-buffer-430517-i1")
 DIALOGFLOW_LANGUAGE_CODE = "es" 
 SESSION_ID = "current-session"  
+import sqlite3
+from fastapi import HTTPException
+import logging
+
+logger = logging.getLogger(__name__)
 
 async def get_schema():
     connection = None
     try:
-        connection = psycopg2.connect(
-            host="localhost",
-            database="vichabache",
-            user="postgres",
-            password="qwerty"
-        )
+        connection = sqlite3.connect("MakersData.db")
         cursor = connection.cursor()
 
         cursor.execute("""
-            SELECT table_name, column_name, data_type
-            FROM information_schema.columns
-            WHERE table_schema = 'public'
-            ORDER BY table_name, ordinal_position;
+            SELECT name FROM sqlite_master WHERE type='table';
         """)
-
-        schema = cursor.fetchall()
+        
+        tables = cursor.fetchall()
         
         schema_dict = {}
-        for table, column, data_type in schema:
-            if table not in schema_dict:
-                schema_dict[table] = []
-            schema_dict[table].append((column, data_type))
+        for (table_name,) in tables:
+            cursor.execute(f"PRAGMA table_info({table_name});")
+            columns = cursor.fetchall()
+            schema_dict[table_name] = [(column[1], column[2]) for column in columns]  # (column_name, data_type)
         
         print("Esquema de la base de datos:", schema_dict)
         return schema_dict
@@ -65,15 +62,11 @@ async def get_schema():
         if connection:
             cursor.close()
             connection.close()
+
 async def query(sql_query: str):
     connection = None
     try:
-        connection = psycopg2.connect(
-            host="localhost",
-            database="vichabache",
-            user="postgres",
-            password="qwerty"
-        )
+        connection = sqlite3.connect("MakersData.db")
         cursor = connection.cursor()
         cursor.execute(sql_query)
         
@@ -164,7 +157,7 @@ async def human_query(payload: PostHumanQueryPayload):
 @app.get("/")
 async def read_root():
     schema = await get_schema()
-    sql_query = "SELECT * FROM usuario;"
+    sql_query = "SELECT * FROM productos;"
     result = await query(sql_query)
 
     return {"message": "Welcome", "schema": schema, "result": result}

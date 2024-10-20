@@ -8,12 +8,9 @@ from flask_wtf import FlaskForm
 from psycopg2 import sql
 from pydantic import BaseModel, Extra
 from typing import Dict, Any
-from flask import (Flask,redirect,render_template, make_response,url_for)
-import sqlite3
-from fastapi import HTTPException
+from flask import (Flask,redirect,render_template, make_response,url_for, jsonify)
 from wtforms.fields import StringField, PasswordField, SubmitField
 from wtforms.validators import DataRequired
-
 #Inicio del código  
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)

@@ -102,15 +102,15 @@ def human_query_to_sql(human_query: str):
 
     query_lower = human_query.lower()
 
-    if "cuántos usuarios hay" in query_lower or "usuarios registrados" in query_lower:
-        query = "SELECT COUNT(*) FROM usuario;"
+    if "Cuántos productos tienes disponibles" in query_lower or "usuarios registrados" in query_lower:
+        query = "SELECT COUNT(*) FROM productos;"
         logger.debug(f"Generated SQL query: {query}")
         return query
 
     match = re.search(r"quién es (.+)", query_lower)
     if match:
         nombre_usuario = match.group(1).strip().replace("'", "''")
-        query = f"SELECT * FROM usuario WHERE nombreusuario = '{nombre_usuario}';"
+        query = f"SELECT * FROM productos WHERE nombre = '{nombre_usuario}';"
         logger.debug(f"Generated SQL query: {query}")
         return query
 
@@ -132,21 +132,21 @@ class PostHumanQueryPayload(BaseModel):
     class Config:
         extra = Extra.allow  
 
-# Ruta POST para procesar consultas en lenguaje natural
-@app.route("/human_query", methods=["POST"])
+
+@app.post("/human_query")
 def human_query(payload: PostHumanQueryPayload):
     intent_response = detect_intent_texts(DIALOGFLOW_PROJECT_ID, SESSION_ID, payload.human_query, DIALOGFLOW_LANGUAGE_CODE)
-    sql_query = human_query_to_sql(intent_response)
+    sql_query =  human_query_to_sql(intent_response)
     
-    # Log para ver la consulta SQL generada
+    # Agregar un log para ver la consulta SQL generada
     logger.debug(f"Generated SQL query: {sql_query}")
 
     if not sql_query:
         raise HTTPException(status_code=400, detail="Falló la generación de la consulta SQL")
 
-    result = query(sql_query)
+    result =  query(sql_query)
 
-    answer = build_answer(result, payload.human_query)
+    answer =  build_answer(result, payload.human_query)
     if not answer:
         raise HTTPException(status_code=400, detail="Falló la generación de la respuesta")
 
@@ -170,7 +170,7 @@ def chatbot():
 #cualquier cosa
 @app.route("/")
 def read_root():
-    response = make_response(redirect('/welcome.'))
+    response = make_response(redirect('/welcome'))
     return response
 
 if __name__ == '__main__':

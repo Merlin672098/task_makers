@@ -3,27 +3,67 @@
 <head>
 	<title>chatbot</title>
 	<link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css')}}">
-	<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Allerta+Stencil">
-    <script src="{{ url_for('static', filename='js/script.js') }}"></script>      
+	<script src="{{url_for('static', filename= 'js/chatbot.js')}}"></script> 
 </head>
 <body>
-        <div class="head">
-            <p >a simple chatbot</p>
-        </div>
-    <div class="chatbox">
-        <div class="chatlogs">
-            <div class="chat user">
-                <div class="user-photo"></div>
-                    <div class="chat-message">user: <span id="user"></span></div>
-                </div>
-        <div class="chat bot">
-            <div class="user-photo"></div>
-
-            <div class="chat-message">chatbot: <span id="chatbot"></span></div>
-        </div>
-        <div class="chat-form"><input id="input" type="text" placeholder="say anything..." autocomplete="off"/></div>
+    <div class="container">
+        <nav class="main-nav">
+            <a href="{{url_for('welcome')}}" style="padding-top: 2%; ">
+                <img src="/static/css/makers.png">
+            </a>
+      
+            <ul class="main-menu">
+              <li><a href="#">Products</a></li>
+              <li><a href="#">New arrivals</a></li>
+              <li><a href="#">About Us</a></li>
+              <li><a href="#">Deals</a></li>
+              <li><a href="{{url_for('chatbot')}}">Support</a></li>
+            </ul>
+            
+            <ul class="right-menu">
+              <li>
+                <a href="#">
+                  <i class="fas fa-search"></i>
+                </a>
+              </li>
+              <li>
+                <a href="#">
+                  <i class="fas fa-shopping-cart"></i>
+                </a>
+              </li>
+            </ul>
+          </nav>
     </div>
+    <div class="split-screen">
+        <div class="split-pane col-xs-12 col-sm-6 uiux-side">
+            <div>
+              <img src="/static/css/chatbot.png" >
+              <div class="text-content">
+                <div class="bold">Makers Tech</div>
+                <div class="big">Chat Bot</div>
+              </div>
+            </div>
+          </div>
+          <div class="split-pane col-xs-12 col-sm-6 frontend-side">
+            <script src="https://code.responsivevoice.org/responsivevoice.js"></script> 
+            <div class="chatbot">
+              <!-- <div class="text-content">
+                <div class="bold">You want</div>
+                <div class="big">FRONT-END?</div>
+              </div>
+              <input type="text"> -->
+              <main></main>
+                <div id="last"></div>
+                        
+                <div class="footer">
+                    <div id="command">
+                        <input placeholder="Input command here " type="text" />
+                        <button class="shadow buttonn">∆</button>
+                    </div>
+                </div>
+            </div>
+          </div>    
     </div>
 </body>
+
 </html>

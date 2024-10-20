@@ -65,6 +65,29 @@
           </div>    
     </div>
 </body>
-<script src="{{url_for('static', filename= 'js/chatbot.js')}}"></script> 
-
+<script>
+    document.querySelector('.buttonn').addEventListener('click', function() {
+        const inputCommand = document.querySelector('input').value; 
+    
+        if(inputCommand) {
+            fetch('/human_query', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    human_query: inputCommand
+                })
+            })
+            .then(response => response.json()) 
+            .then(data => {
+                document.getElementById('last').innerText = `Respuesta: ${data.response}`;
+            })
+            .catch(error => console.error('Error:', error));
+        } else {
+            alert('Por favor ingresa un comando.');
+        }
+    });
+</script>
+    
 </html>

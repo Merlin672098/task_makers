@@ -18,11 +18,7 @@ def not_found(error):
 #Ruta Principal
 @app.route ('/')
 def index():
-    user_ip = request.remote_addr
-    response = make_response(redirect('/welcome'))
-    session['user_ip'] = user_ip
-
-    return response
+    return render_template('index.html')
 
 if __name__ == '__main__':
     app.run(debug=True)

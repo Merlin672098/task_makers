@@ -154,7 +154,7 @@ def human_query(payload: PostHumanQueryPayload):
 
 # Ruta GET para leer la raíz
 #RUTA DE INICIO
-@app.route("/Welcome.html")
+@app.route("/welcome")
 def welcome():
     return render_template('welcome.html')
 
@@ -170,7 +170,7 @@ def chatbot():
 #cualquier cosa
 @app.route("/")
 def read_root():
-    response = make_response(redirect('/welcome'))
+    response = make_response(redirect('/welcome.'))
     return response
 
 if __name__ == '__main__':

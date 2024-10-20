@@ -2,10 +2,10 @@
 import json, logging, os , asyncio, re
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-from dotenv import load_dotenv
-from google.cloud import dialogflow_v2 as dialogflow
-import psycopg2
-from psycopg2 import sql
+# from dotenv import load_dotenv
+# from google.cloud import dialogflow_v2 as dialogflow
+# import psycopg2
+# from psycopg2 import sql
 from pydantic import BaseModel, Extra
 from typing import Dict, Any
 from flask import (Flask,redirect,render_template, make_response)
@@ -15,13 +15,13 @@ from flask import (Flask,redirect,render_template, make_response)
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
-load_dotenv()
+# load_dotenv()
 
-BACKEND_SERVER = "http://localhost:8000"
+# BACKEND_SERVER = "http://localhost:8000"
 app = Flask(__name__)
-DIALOGFLOW_PROJECT_ID = "fresh-buffer-430517-i1"
-DIALOGFLOW_LANGUAGE_CODE = "es"
-SESSION_ID = "current-session"
+# DIALOGFLOW_PROJECT_ID = "fresh-buffer-430517-i1"
+# DIALOGFLOW_LANGUAGE_CODE = "es"
+# SESSION_ID = "current-session"
 
 import sqlite3
 from fastapi import HTTPException
@@ -80,85 +80,86 @@ def query(sql_query: str):
             connection.close()
 
 # Detectar la intención del texto usando Dialogflow
-def detect_intent_texts(project_id, session_id, text, language_code):
-    session_client = dialogflow.SessionsClient()
-    session = session_client.session_path(project_id, session_id)
+# def detect_intent_texts(project_id, session_id, text, language_code):
+#     session_client = dialogflow.SessionsClient()
+#     session = session_client.session_path(project_id, session_id)
 
-    text_input = dialogflow.TextInput(text=text, language_code=language_code)
-    query_input = dialogflow.QueryInput(text=text_input)
+#     text_input = dialogflow.TextInput(text=text, language_code=language_code)
+#     query_input = dialogflow.QueryInput(text=text_input)
 
-    try:
-        response = session_client.detect_intent(session=session, query_input=query_input)
-        fulfillment_text = response.query_result.fulfillment_text
-        logger.debug(f"Dialogflow Fulfillment Text: {fulfillment_text}")
-        return fulfillment_text
-    except Exception as e:
-        logger.error(f"Error en Dialogflow: {e}")
-        raise HTTPException(status_code=500, detail="Error en Dialogflow")
+#     try:
+#         response = session_client.detect_intent(session=session, query_input=query_input)
+#         fulfillment_text = response.query_result.fulfillment_text
+#         logger.debug(f"Dialogflow Fulfillment Text: {fulfillment_text}")
+#         return fulfillment_text
+#     except Exception as e:
+#         logger.error(f"Error en Dialogflow: {e}")
+#         raise HTTPException(status_code=500, detail="Error en Dialogflow")
 
 # Convertir una consulta en lenguaje humano a SQL
-def human_query_to_sql(human_query: str):
-    logger.debug(f"Texto recibido para convertir a SQL: {human_query}")
+# def human_query_to_sql(human_query: str):
+#     logger.debug(f"Texto recibido para convertir a SQL: {human_query}")
 
-    query_lower = human_query.lower()
+#     query_lower = human_query.lower()
 
-    if "cuántos usuarios hay" in query_lower or "usuarios registrados" in query_lower:
-        query = "SELECT COUNT(*) FROM usuario;"
-        logger.debug(f"Generated SQL query: {query}")
-        return query
+#     if "cuántos usuarios hay" in query_lower or "usuarios registrados" in query_lower:
+#         query = "SELECT COUNT(*) FROM usuario;"
+#         logger.debug(f"Generated SQL query: {query}")
+#         return query
 
-    match = re.search(r"quién es (.+)", query_lower)
-    if match:
-        nombre_usuario = match.group(1).strip().replace("'", "''")
-        query = f"SELECT * FROM usuario WHERE nombreusuario = '{nombre_usuario}';"
-        logger.debug(f"Generated SQL query: {query}")
-        return query
+#     match = re.search(r"quién es (.+)", query_lower)
+#     if match:
+#         nombre_usuario = match.group(1).strip().replace("'", "''")
+#         query = f"SELECT * FROM usuario WHERE nombreusuario = '{nombre_usuario}';"
+#         logger.debug(f"Generated SQL query: {query}")
+#         return query
 
-    logger.debug("No valid SQL query generated.")
-    return None
+#     logger.debug("No valid SQL query generated.")
+#     return None
 
 # Crear una respuesta a partir del resultado SQL
-def build_answer(result: list[tuple], human_query: str) -> str | None:
-    if not result:
-        return f"No se encontraron resultados para '{human_query}'."
+# def build_answer(result: list[tuple], human_query: str) -> str | None:
+#     if not result:
+#         return f"No se encontraron resultados para '{human_query}'."
     
-    user_info = ", ".join([str(user) for user in result])  # Formato básico
-    return f"Resultados para '{human_query}': {user_info}"
+#     user_info = ", ".join([str(user) for user in result])  # Formato básico
+#     return f"Resultados para '{human_query}': {user_info}"
 
-class PostHumanQueryPayload(BaseModel):
-    human_query: str
-    additionalProps: Dict[str, Any] = {} 
+# class PostHumanQueryPayload(BaseModel):
+#     human_query: str
+#     additionalProps: Dict[str, Any] = {} 
 
-    class Config:
-        extra = Extra.allow  
+#     class Config:
+#         extra = Extra.allow  
 
 # Ruta POST para procesar consultas en lenguaje natural
-@app.route("/human_query", methods=["POST"])
-def human_query(payload: PostHumanQueryPayload):
-    intent_response = detect_intent_texts(DIALOGFLOW_PROJECT_ID, SESSION_ID, payload.human_query, DIALOGFLOW_LANGUAGE_CODE)
-    sql_query = human_query_to_sql(intent_response)
+# @app.route("/human_query", methods=["POST"])
+# def human_query(payload: PostHumanQueryPayload):
+#     intent_response = detect_intent_texts(DIALOGFLOW_PROJECT_ID, SESSION_ID, payload.human_query, DIALOGFLOW_LANGUAGE_CODE)
+#     sql_query = human_query_to_sql(intent_response)
     
-    # Log para ver la consulta SQL generada
-    logger.debug(f"Generated SQL query: {sql_query}")
+#     # Log para ver la consulta SQL generada
+#     logger.debug(f"Generated SQL query: {sql_query}")
 
-    if not sql_query:
-        raise HTTPException(status_code=400, detail="Falló la generación de la consulta SQL")
+#     if not sql_query:
+#         raise HTTPException(status_code=400, detail="Falló la generación de la consulta SQL")
 
-    result = query(sql_query)
+#     result = query(sql_query)
 
-    answer = build_answer(result, payload.human_query)
-    if not answer:
-        raise HTTPException(status_code=400, detail="Falló la generación de la respuesta")
+#     answer = build_answer(result, payload.human_query)
+#     if not answer:
+#         raise HTTPException(status_code=400, detail="Falló la generación de la respuesta")
 
-    return {"answer": answer}
+#     return {"answer": answer}
 
 # Ruta GET para leer la raíz
+
 #RUTA DE INICIO
 @app.route("/welcome")
 def welcome():
     return render_template('Welcome.html')
 
-@app.route("/chatbot", methods= ['GET'])
+@app.route("/chatbot")
 def chatbot():
     schema = get_schema()
     sql_query = "SELECT * FROM productos;"
@@ -169,7 +170,7 @@ def chatbot():
 #cualquier cosa
 @app.route("/")
 def read_root():
-    response = make_response(redirect('/welcome.'))
+    response = make_response(redirect('/welcome'))
     return response
 
 if __name__ == '__main__':

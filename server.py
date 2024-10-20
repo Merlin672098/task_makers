@@ -4,14 +4,17 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from dotenv import load_dotenv
 from google.cloud import dialogflow_v2 as dialogflow
-import psycopg2
+from flask_wtf import FlaskForm
 from psycopg2 import sql
 from pydantic import BaseModel, Extra
 from typing import Dict, Any
-from flask import (Flask,redirect,render_template, make_response,request)
+from flask import (Flask,redirect,render_template, make_response,url_for)
+import sqlite3
+from fastapi import HTTPException
+from wtforms.fields import StringField, PasswordField, SubmitField
+from wtforms.validators import DataRequired
 
-
-#Inicio del código
+#Inicio del código  
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
@@ -23,8 +26,11 @@ DIALOGFLOW_PROJECT_ID = "fresh-buffer-430517-i1"
 DIALOGFLOW_LANGUAGE_CODE = "es"
 SESSION_ID = "current-session"
 
-import sqlite3
-from fastapi import HTTPException
+class LoginForm(FlaskForm):
+    username = StringField('Nombre de Usuario', validators=[DataRequired()])
+    password = PasswordField('Password', validators=[DataRequired()])
+    submit = SubmitField('Enviar')
+
 
 # Función síncrona para obtener el esquema de la base de datos
 def get_schema():
@@ -79,92 +85,23 @@ def query(sql_query: str):
             cursor.close()
             connection.close()
 
-def detect_intent_texts(project_id, session_id, text, language_code):
-    """Detecta la intención de un texto utilizando Dialogflow."""
-    session_client = dialogflow.SessionsClient()
-    session = session_client.session_path(project_id, session_id)
+@app.route ('/otra_pagina')
+def otra_pagina():
+    return render_template('login.html')
 
-    text_input = dialogflow.TextInput(text=text, language_code=language_code)
-    query_input = dialogflow.QueryInput(text=text_input)
-
-    try:
-        response = session_client.detect_intent(session=session, query_input=query_input)
-        fulfillment_text = response.query_result.fulfillment_text
-        logger.debug(f"Dialogflow Fulfillment Text: {fulfillment_text}")
-        return fulfillment_text
-    except Exception as e:
-        logger.error(f"Error en Dialogflow: {e}")
-        raise HTTPException(status_code=500, detail="Error en Dialogflow")
-
-async def human_query_to_sql(human_query: str):
-    logger.debug(f"Texto recibido para convertir a SQL: {human_query}")
-
-    query_lower = human_query.lower()
-
-    # Detectar cantidad de usuarios con más variaciones
-    if "cuántos usuarios hay" in query_lower or "usuarios registrados" in query_lower or "hay" in query_lower and "usuarios registrados" in query_lower:
-        query = "SELECT COUNT(*) FROM usuario;"
-        logger.debug(f"Generated SQL query: {query}")
-        return query
-
-    # Detectar usuario por nombre
-    match = re.search(r"quién es (.+)", query_lower)
-    if match:
-        nombre_usuario = match.group(1).strip().replace("'", "''")
-        query = f"SELECT * FROM usuario WHERE nombreusuario = '{nombre_usuario}';"
-        logger.debug(f"Generated SQL query: {query}")
-        return query
-
-    logger.debug("No valid SQL query generated.")
-    return None
-async def build_answer(result: list[tuple], human_query: str) -> str | None:
-    if not result:
-        return f"No se encontraron resultados para '{human_query}'."
-    
-    # Si se encontró al menos un resultado, construye la respuesta
-    user_info = ", ".join([str(user) for user in result])  # Aquí puedes formatear mejor la información
-    return f"Resultados para '{human_query}': {user_info}"
-
-class PostHumanQueryPayload(BaseModel):
-    human_query: str
-    additionalProps: Dict[str, Any] = {} 
-
-    class Config:
-        extra = Extra.allow 
-
-
-
-from fastapi import FastAPI, HTTPException
-
-@app.route('/human_query', methods=['POST'])
-async def human_query():
-    payload = request.get_json()
-    try:
-        intent_response = detect_intent_texts(DIALOGFLOW_PROJECT_ID, SESSION_ID, payload.human_query, DIALOGFLOW_LANGUAGE_CODE)
-        sql_query = await human_query_to_sql(intent_response)
-
-        logger.debug(f"Generated SQL query: {sql_query}")
-
-        if not sql_query:
-            raise HTTPException(status_code=400, detail="Falló la generación de la consulta SQL")
-
-        result = await query(sql_query)
-
-        answer = await build_answer(result, payload.human_query)
-        if not answer:
-            raise HTTPException(status_code=400, detail="Falló la generación de la respuesta")
-
-        return {"answer": answer}
-    except Exception as e:
-        logger.error(f"Error: {str(e)}")
-        raise HTTPException(status_code=500, detail="Error interno del servidor")
-
-# Ruta GET para leer la raíz
+@app.route ('/otra_pagina2')
+def otra_pagina2():
+    return redirect(url_for('dashboard'))
 
 #RUTA DE INICIO
 @app.route("/welcome")
 def welcome():
     return render_template('Welcome.html')
+
+
+@app.route('/login', methods=['GET','POST'])
+def login():
+    return render_template('login.html')
 
 @app.route("/chatbot")
 def chatbot():

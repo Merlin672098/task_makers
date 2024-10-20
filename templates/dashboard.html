@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Dashboard</title>
+    </head>
+    <!-- <body>
+        <h1>Dashboard</h1>
+        
+        {% for refri in refris %}
+            <h2>Refrigerator ID {{ refri }}</h2>
+            {% if latest_data_per_refri[refri] %}
+                <div style="margin-top: 20px;">
+                    <h3>Latest Temperature: {{ latest_data_per_refri[refri]['temperature'] }}°C</h3>
+                    <p>Latest Date: {{ latest_data_per_refri[refri]['date'] }}</p>
+                    <p>Cambio vs Previo: {{ '%.2f'|format(latest_data_per_refri[refri]['percentage_change']) }}%</p>
+                </div>
+            {% else %}
+                <p>No data available for Refrigerator ID {{ refri }}</p>
+            {% endif %}
+        {% endfor %}
+    </body> -->
+    <body>
+        <main class="main-container">
+            <div class="main-title">
+                <p class="font-weight-bold">DASHBOARD</p>
+            </div>
+            <div class="main-cards">
+                {% for refri in refris %}
+                <div class="card" style="margin-bottom: 20px;">
+                    <div class="card-inner">
+                        <!--<h2>Refrigerator ID {{ refri }}</h2>-->
+                        {% if latest_data_per_refri[refri] %}
+                            <div style="margin-top: 5px;">
+                                <p class="text-primary"><Datag>FREEZO {{ refri }}</Datag></p>
+                                <span class="text-primary font-weight-bold">{{ latest_data_per_refri[refri]['temperature'] }}°C</span>
+                                <h5>Cambio vs Previo: {{ latest_data_per_refri[refri]['percentage_change'] }}%</5>
+                                <h5>Última vez: {{ latest_data_per_refri[refri]['date'] }}</5>
+                            </div>
+                        {% else %}
+                            <p>No data available for Refrigerator ID {{ refri }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <div class="charts">
+
+                <div class="charts-card">
+                  <p class="chart-title">Mis Dispositivos</p>
+                  <div id="bar-chart"></div>
+                  {{ plot_div | safe }}
+                </div>
+      
+                <div class="charts-card">
+                  <p class="chart-title">Gráfica Semanal de Temperaturas</p>
+                  <div id="area-chart"></div>
+                  {{ plot_div2 | safe }}
+            </div>
+        
+        </main>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/apexcharts/3.35.3/apexcharts.min.js"></script>
+
+        
+    </body>
+    
+    </html>
+
+{% endblock content %}

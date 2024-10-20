@@ -1,0 +1,73 @@
+
+
+{% block content %}
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+<script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+<div class = "fondo">
+    <div class="veen">
+        <div class="login-btn splits">
+            <p>¿Ya eres usuario?</p>
+            <button class="loginboton">Login</button>
+        </div>
+        <div class="rgstr-btn splits">
+            <p>¿No tienes cuenta?</p>
+            <button>Regístrate</button>
+        </div>
+        <div class="wrapper">
+            
+            <form id="login" tabindex="500">
+                <img src="{{ url_for('static', filename='images/freezoAzul.png') }}" height="50" width="200">
+                <h3>Iniciar Sesión</h3>
+                <div class="mail">
+                    <input type="email" id="email">
+                    <label>Mail or Nombre de Usuario</label>
+                </div>
+                <div class="passwd">
+                    <input type="password" id="password">
+                    <label>Contraseña</label>
+                </div>
+                <div class="submit">
+                    <button class="dark">Login</button>
+                </div>
+            </form>
+            <form id="register" tabindex="502">
+                <img src="{{ url_for('static', filename='images/freezoAzul.png') }}" height="50" width="200" id="imgFreezoAma">
+                <h3>Regístrate</h3>
+                <div class="name">
+                    <input type="text" name="fullname">
+                    <label>Dispositivo</label>
+                </div>
+                <div class="mail">
+                    <input type="email" name="email">
+                    <label>Nombre de Usuario</label>
+                </div>
+                <div class="uid">
+                    <input type="text" name="username">
+                    <label>Correo</label>
+                </div>
+                <div class="passwd">
+                    <input type="password" name="password">
+                    <label>Contraseña</label>
+                </div>
+                <div class="submit">
+                    <button class="dark" type = "button" onclick="enlazar2()">Regístrate</button>
+                </div>
+            </form>
+        </div>
+
+        <script>
+            function enlazar2(){
+                window.location.href = "{{ url_for('otra_pagina2')}}";
+            }
+        </script>
+    </div>
+</div>
+
+
+{% endblock %}

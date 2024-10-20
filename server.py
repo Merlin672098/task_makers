@@ -140,7 +140,7 @@ from fastapi import FastAPI, HTTPException
 async def human_query():
     payload = request.get_json()
     try:
-        intent_response = detect_intent_texts(DIALOGFLOW_PROJECT_ID, SESSION_ID, payload.human_query, DIALOGFLOW_LANGUAGE_CODE)
+        intent_response = detect_intent_texts(DIALOGFLOW_PROJECT_ID, SESSION_ID, payload['human_query'], DIALOGFLOW_LANGUAGE_CODE)
         sql_query = await human_query_to_sql(intent_response)
 
         logger.debug(f"Generated SQL query: {sql_query}")
@@ -150,14 +150,37 @@ async def human_query():
 
         result = await query(sql_query)
 
-        answer = await build_answer(result, payload.human_query)
+        answer = await build_answer(result, payload['human_query'])
         if not answer:
             raise HTTPException(status_code=400, detail="Falló la generación de la respuesta")
 
-        return {"answer": answer}
+        # Cambio aquí: Enviar respuesta como 'response' para que lo reciba el JS
+        return jsonify({"response": answer})
+
     except Exception as e:
         logger.error(f"Error: {str(e)}")
         raise HTTPException(status_code=500, detail="Error interno del servidor")
+# async def human_query():
+#     payload = request.get_json()
+#     try:
+#         intent_response = detect_intent_texts(DIALOGFLOW_PROJECT_ID, SESSION_ID, payload.human_query, DIALOGFLOW_LANGUAGE_CODE)
+#         sql_query = await human_query_to_sql(intent_response)
+
+#         logger.debug(f"Generated SQL query: {sql_query}")
+
+#         if not sql_query:
+#             raise HTTPException(status_code=400, detail="Falló la generación de la consulta SQL")
+
+#         result = await query(sql_query)
+
+#         answer = await build_answer(result, payload.human_query)
+#         if not answer:
+#             raise HTTPException(status_code=400, detail="Falló la generación de la respuesta")
+
+#         return {"answer": answer}
+#     except Exception as e:
+#         logger.error(f"Error: {str(e)}")
+#         raise HTTPException(status_code=500, detail="Error interno del servidor")
 
 # Ruta GET para leer la raíz
 

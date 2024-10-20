@@ -9,4 +9,6 @@ flask-wtf
 flask-testing
 pandas
 matplotlib
+flask_table
+markupsafe
 

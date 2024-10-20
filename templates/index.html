@@ -8,5 +8,22 @@
 <body>
     <h1>¡Bienvenido a mi página Flask!</h1>
     <p>Esta es una página web simple usando Flask.</p>
+    <table border="1">
+        <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Descripción</th>
+            <th>Precio</th>
+        </tr>
+        {% for producto in productos %}
+        <tr>
+            <td>{{ producto.id }}</td>
+            <td>{{ producto.nombre }}</td>
+            <td>{{ producto.descripcion }}</td>
+            <td>{{ producto.precio }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    
 </body>
 </html>

@@ -100,7 +100,7 @@ html, body {
 }
 
 .frontend-side {
-  background-image: url("https://s3-us-west-2.amazonaws.com/s.cdpn.io/74452/website-post-its.png"); 
+  background-color: #5783e3; 
 }
 
 .uiux-side {
@@ -306,7 +306,6 @@ main
     border-radius:20px;
     font-weight:300;
     float:right;
-    
     
  }
  

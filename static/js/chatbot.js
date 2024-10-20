@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
             addMessage(userQuery, 'question');
 
             // Hacer la solicitud POST al backend para obtener la respuesta
-            fetch('http://127.0.0.1:8000/human_query', {
+            fetch('https://6289-131-0-196-252.ngrok-free.app/human_query', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

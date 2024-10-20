@@ -15,7 +15,7 @@ from flask import (Flask,redirect,render_template, make_response,request)
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
-load_dotenv()
+# load_dotenv()
 
 BACKEND_SERVER = "http://localhost:8000"
 app = Flask(__name__)

@@ -8,7 +8,7 @@ import psycopg2
 from psycopg2 import sql
 from pydantic import BaseModel, Extra
 from typing import Dict, Any
-from flask import (Flask,redirect,render_template, make_response,request)
+from flask import (Flask,redirect,render_template, make_response,request, jsonify)
 
 
 #Inicio del código

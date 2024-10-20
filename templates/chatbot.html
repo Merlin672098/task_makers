@@ -3,7 +3,7 @@
 <head>
 	<title>chatbot</title>
 	<link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css')}}">
-	
+	<script src="{{url_for('static', filename= 'js/chatbot.js')}}"></script> 
 </head>
 <body>
     <div class="container">
@@ -42,14 +42,11 @@
                 <div class="bold">Makers Tech</div>
                 <div class="big">Chat Bot</div>
               </div>
-              <button>
-                SHOW ME THE DESIGN
-              </button>
             </div>
           </div>
           <div class="split-pane col-xs-12 col-sm-6 frontend-side">
             <script src="https://code.responsivevoice.org/responsivevoice.js"></script> 
-            <div >
+            <div class="chatbot">
               <!-- <div class="text-content">
                 <div class="bold">You want</div>
                 <div class="big">FRONT-END?</div>
@@ -61,7 +58,7 @@
                 <div class="footer">
                     <div id="command">
                         <input placeholder="Input command here " type="text" />
-                        <button class="buttonn shadow nice-font ">∆</button>
+                        <button class="shadow buttonn">∆</button>
                     </div>
                 </div>
             </div>

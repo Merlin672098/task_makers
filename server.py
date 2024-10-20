@@ -8,7 +8,7 @@ import psycopg2
 from psycopg2 import sql
 from pydantic import BaseModel, Extra
 from typing import Dict, Any
-from flask import (Flask)
+from flask import (Flask,redirect,render_template, make_response)
 
 
 #Inicio del código
@@ -153,15 +153,25 @@ def human_query(payload: PostHumanQueryPayload):
     return {"answer": answer}
 
 # Ruta GET para leer la raíz
+#RUTA DE INICIO
+@app.route("/Welcome.html")
+def welcome():
+    return render_template('welcome.html')
 
-#cualquier cosa
-@app.route("/")
-def read_root():
+@app.route("/Chatbot.html")
+def chatbot():
+    response = make_response(redirect('/welcome'))
     schema = get_schema()
     sql_query = "SELECT * FROM productos;"
     result = query(sql_query)
 
     return {"message": "Welcome", "schema": schema, "result": result}
+
+#cualquier cosa
+@app.route("/")
+def read_root():
+    response = make_response(redirect('/welcome'))
+    return response
 
 if __name__ == '__main__':
     app.run(debug=True)

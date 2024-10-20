@@ -1,7 +1,5 @@
-import json
-import logging
-import os
-import asyncio
+#LIBRERIAS
+import json, logging, os , asyncio, re
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from dotenv import load_dotenv
@@ -10,12 +8,10 @@ import psycopg2
 from psycopg2 import sql
 from pydantic import BaseModel, Extra
 from typing import Dict, Any
-import re
-import logging
 
+#Inicio del código
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
-
 
 load_dotenv()
 
@@ -164,5 +160,4 @@ async def read_root():
 
 if __name__ == "__main__":
     import uvicorn
-
     uvicorn.run(app, host="0.0.0.0", port=8000)

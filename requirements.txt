@@ -9,9 +9,9 @@ flask-wtf
 flask-testing
 pandas
 matplotlib
-flask_table
 markupsafe
 fastapi
 pydantic
 google.cloud
 typing
+google-cloud-dialogflow

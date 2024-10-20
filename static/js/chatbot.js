@@ -1,61 +1,60 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const mainChat = document.querySelector('#chat-content');
-    const askButton = document.querySelector('#ask-button');
-    const inputField = document.querySelector('#input-command');
-    const lastDiv = document.querySelector('#last');
+document.querySelector('.buttonn').addEventListener('click', function() {
+    const inputCommand = document.querySelector('input').value;
 
-    const addMessage = (text, className) => {
-        const row = document.createElement('div');
-        row.classList.add('row');
-        const message = document.createElement('div');
-        message.classList.add('chat', className, 'shadow');
-        message.textContent = text;
-        row.appendChild(message);
-        mainChat.appendChild(row);
-    };
+    if (inputCommand) {
+        // Añadir la pregunta del usuario al chat con los estilos adecuados
+        addQuestion(inputCommand);
 
-    const askQuestion = () => {
-        const userQuery = inputField.value;
-
-        if (userQuery.trim() !== '') {
-            // Mostrar la pregunta del usuario en el chat
-            addMessage(userQuery, 'question');
-
-            // Hacer la solicitud POST al backend para obtener la respuesta
-            fetch('https://6289-131-0-196-252.ngrok-free.app/human_query', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ human_query: userQuery })
+        // Enviar la consulta al servidor
+        fetch('https://6289-131-0-196-252.ngrok-free.app/human_query', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                human_query: inputCommand
             })
-            .then(response => response.json())
-            .then(data => {
-                // Mostrar la respuesta del backend en el chat
-                addMessage(data.response, 'answer');
-                
-                // Scroll hacia el final del chat
-                lastDiv.scrollIntoView();
-            })
-            .catch(error => {
-                console.error('Error fetching response:', error);
-                addMessage('Oops! Something went wrong.', 'answer');
-            });
-
-            // Limpiar el campo de entrada
-            inputField.value = '';
-        } else {
-            alert('Por favor ingresa un comando.');
-        }
-    };
-
-    // Manejar el click en el botón de preguntar
-    askButton.addEventListener('click', askQuestion);
-
-    // Manejar el "Enter" para enviar la pregunta
-    inputField.addEventListener('keyup', (event) => {
-        if (event.keyCode === 13) {
-            askQuestion();
-        }
-    });
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok ' + response.statusText);
+            }
+            return response.json();
+        })
+        .then(data => {
+            // Añadir la respuesta del bot al chat con los estilos adecuados
+            addAnswer(data.answer);
+        })
+        .catch(error => console.error('Error:', error));
+    } else {
+        alert('Por favor ingresa un comando.');
+    }
 });
+
+// Función para añadir la pregunta al chat con los estilos adecuados
+function addQuestion(text) {
+    const main = document.querySelector('main');
+    main.innerHTML += `
+        <div class="row">
+            <div class="chat question shadow">${text}</div>
+        </div>
+    `;
+    scrollToBottom();
+}
+
+// Función para añadir la respuesta del bot al chat con los estilos adecuados
+function addAnswer(text) {
+    const main = document.querySelector('main');
+    main.innerHTML += `
+        <div class="row">
+            <div class="chat answer shadow">${text}</div>
+        </div>
+    `;
+    scrollToBottom();
+}
+
+// Función para hacer scroll automático al final del chat
+function scrollToBottom() {
+    const lastElement = document.getElementById('last');
+    lastElement.scrollIntoView();
+}

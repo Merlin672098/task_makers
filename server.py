@@ -156,17 +156,16 @@ def human_query(payload: PostHumanQueryPayload):
 #RUTA DE INICIO
 @app.route("/welcome")
 def welcome():
-    return render_template('welcome.html')
+    return render_template('Welcome.html')
 
-@app.route("/Chatbot.html")
+@app.route("/Chatbot", methods= ['GET'])
 def chatbot():
-    response = make_response(redirect('/welcome'))
     schema = get_schema()
     sql_query = "SELECT * FROM productos;"
     result = query(sql_query)
+    return render_template('/Chatbot.html', schema=schema, result=result)
 
-    return {"message": "Welcome", "schema": schema, "result": result}
-
+#message": "Welcome", "schema": schema, "result": result
 #cualquier cosa
 @app.route("/")
 def read_root():

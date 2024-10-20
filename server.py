@@ -1,6 +1,6 @@
-import json
-import logging
-import os
+#LIBRERIAS
+import json, logging, os , asyncio, re
+from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from dotenv import load_dotenv
 from google.cloud import dialogflow_v2 as dialogflow
@@ -8,9 +8,10 @@ import psycopg2
 from psycopg2 import sql
 from pydantic import BaseModel, Extra
 from typing import Dict, Any
-import re
-from flask import Flask
+from flask import (Flask)
 
+
+#Inicio del código
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 

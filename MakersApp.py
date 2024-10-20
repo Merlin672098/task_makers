@@ -1,13 +1,29 @@
+#LIBRERIAS
+
 from flask import (Flask, request, render_template, redirect, session, make_response)
 import sqlite3, json, logging, os, asyncio,logging, re
 from fastapi import FastAPI, HTTPException
 from google.cloud import dialogflow_v2 as dialogflow
 from pydantic import BaseModel, Extra
+from typing import Dict, Any, Optional
+from fastapi.responses import JSONResponse
+from starlette.exceptions import HTTPException as StarletteHTTPException
 
-app = Flask(__name__)
+
+
+#INCIO DEL CODIGO
+
 logger = logging.getLogger(__name__)
 
-app.config['SECRET_KEY'] = 'SUPER SECRETO'
+logger = logging.getLogger(__name__)
+
+BACKEND_SERVER = ("http://localhost:5000")
+
+app = FastAPI(servers=[{"url": BACKEND_SERVER}])
+
+DIALOGFLOW_PROJECT_ID = ("fresh-buffer-430517-i1")
+DIALOGFLOW_LANGUAGE_CODE = "es" 
+SESSION_ID = "current-session"  
 
 #ASYNC DEF
 
@@ -98,7 +114,7 @@ async def human_query_to_sql(human_query: str):
 
     logger.debug("No valid SQL query generated.")
     return None
-async def build_answer(result: list[tuple], human_query: str) -> str | None:
+async def build_answer(result: list[tuple], human_query: str) -> Optional[str]:
     if not result:
         return f"No se encontraron resultados para '{human_query}'."
     
@@ -111,7 +127,7 @@ class PostHumanQueryPayload(BaseModel):
     additionalProps: Dict[str, Any] = {} 
 
     class Config:
-        extra = 'allow'  
+        extra = Extra.allow  
 
 
 def get_db():
@@ -126,6 +142,27 @@ def not_Found(error):
 @app.errorhandler(500)
 def not_found(error):
     return render_template('500.html',error=error)
+
+
+#POST
+@app.post("/human_query")
+async def human_query(payload: PostHumanQueryPayload):
+    intent_response = detect_intent_texts(DIALOGFLOW_PROJECT_ID, SESSION_ID, payload.human_query, DIALOGFLOW_LANGUAGE_CODE)
+    sql_query = await human_query_to_sql(intent_response)
+    
+    # Agregar un log para ver la consulta SQL generada
+    logger.debug(f"Generated SQL query: {sql_query}")
+
+    if not sql_query:
+        raise HTTPException(status_code=400, detail="Falló la generación de la consulta SQL")
+
+    result = await query(sql_query)
+
+    answer = await build_answer(result, payload.human_query)
+    if not answer:
+        raise HTTPException(status_code=400, detail="Falló la generación de la respuesta")
+
+    return {"answer": answer}
 
 #Ruta Principal
 @app.route ('/')

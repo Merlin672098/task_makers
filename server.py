@@ -152,6 +152,8 @@ def human_query(payload: PostHumanQueryPayload):
     return {"answer": answer}
 
 # Ruta GET para leer la raíz
+
+#cualquier cosa
 @app.route("/")
 def read_root():
     schema = get_schema()

@@ -8,7 +8,7 @@ import psycopg2
 from psycopg2 import sql
 from pydantic import BaseModel, Extra
 from typing import Dict, Any
-from flask import (Flask,redirect,render_template, make_response)
+from flask import (Flask,redirect,render_template, make_response,request)
 
 
 #Inicio del código
@@ -79,8 +79,8 @@ def query(sql_query: str):
             cursor.close()
             connection.close()
 
-# Detectar la intención del texto usando Dialogflow
 def detect_intent_texts(project_id, session_id, text, language_code):
+    """Detecta la intención de un texto utilizando Dialogflow."""
     session_client = dialogflow.SessionsClient()
     session = session_client.session_path(project_id, session_id)
 
@@ -96,33 +96,33 @@ def detect_intent_texts(project_id, session_id, text, language_code):
         logger.error(f"Error en Dialogflow: {e}")
         raise HTTPException(status_code=500, detail="Error en Dialogflow")
 
-# Convertir una consulta en lenguaje humano a SQL
-def human_query_to_sql(human_query: str):
+async def human_query_to_sql(human_query: str):
     logger.debug(f"Texto recibido para convertir a SQL: {human_query}")
 
     query_lower = human_query.lower()
 
-    if "Cuántos productos tienes disponibles" in query_lower or "usuarios registrados" in query_lower:
+    # Detectar cantidad de usuarios con más variaciones
+    if "cuántos usuarios hay" in query_lower or "usuarios registrados" in query_lower or "hay" in query_lower and "usuarios registrados" in query_lower:
         query = "SELECT COUNT(*) FROM productos;"
         logger.debug(f"Generated SQL query: {query}")
         return query
 
+    # Detectar usuario por nombre
     match = re.search(r"quién es (.+)", query_lower)
     if match:
         nombre_usuario = match.group(1).strip().replace("'", "''")
-        query = f"SELECT * FROM productos WHERE nombre = '{nombre_usuario}';"
+        query = f"SELECT * FROM usuario WHERE nombreusuario = '{nombre_usuario}';"
         logger.debug(f"Generated SQL query: {query}")
         return query
 
     logger.debug("No valid SQL query generated.")
     return None
-
-# Crear una respuesta a partir del resultado SQL
-def build_answer(result: list[tuple], human_query: str) -> str | None:
+async def build_answer(result: list[tuple], human_query: str) -> str | None:
     if not result:
         return f"No se encontraron resultados para '{human_query}'."
     
-    user_info = ", ".join([str(user) for user in result])  # Formato básico
+    # Si se encontró al menos un resultado, construye la respuesta
+    user_info = ", ".join([str(user) for user in result])  # Aquí puedes formatear mejor la información
     return f"Resultados para '{human_query}': {user_info}"
 
 class PostHumanQueryPayload(BaseModel):
@@ -130,27 +130,34 @@ class PostHumanQueryPayload(BaseModel):
     additionalProps: Dict[str, Any] = {} 
 
     class Config:
-        extra = Extra.allow  
+        extra = 'allow'  
 
 
-@app.post("/human_query")
-def human_query(payload: PostHumanQueryPayload):
-    intent_response = detect_intent_texts(DIALOGFLOW_PROJECT_ID, SESSION_ID, payload.human_query, DIALOGFLOW_LANGUAGE_CODE)
-    sql_query =  human_query_to_sql(intent_response)
-    
-    # Agregar un log para ver la consulta SQL generada
-    logger.debug(f"Generated SQL query: {sql_query}")
 
-    if not sql_query:
-        raise HTTPException(status_code=400, detail="Falló la generación de la consulta SQL")
+from fastapi import FastAPI, HTTPException
 
-    result =  query(sql_query)
+@app.route('/human_query', methods=['POST'])
+async def human_query():
+    payload = request.get_json()
+    try:
+        intent_response = detect_intent_texts(DIALOGFLOW_PROJECT_ID, SESSION_ID, payload.human_query, DIALOGFLOW_LANGUAGE_CODE)
+        sql_query = await human_query_to_sql(intent_response)
 
-    answer =  build_answer(result, payload.human_query)
-    if not answer:
-        raise HTTPException(status_code=400, detail="Falló la generación de la respuesta")
+        logger.debug(f"Generated SQL query: {sql_query}")
 
-    return {"answer": answer}
+        if not sql_query:
+            raise HTTPException(status_code=400, detail="Falló la generación de la consulta SQL")
+
+        result = await query(sql_query)
+
+        answer = await build_answer(result, payload.human_query)
+        if not answer:
+            raise HTTPException(status_code=400, detail="Falló la generación de la respuesta")
+
+        return {"answer": answer}
+    except Exception as e:
+        logger.error(f"Error: {str(e)}")
+        raise HTTPException(status_code=500, detail="Error interno del servidor")
 
 # Ruta GET para leer la raíz
 #RUTA DE INICIO

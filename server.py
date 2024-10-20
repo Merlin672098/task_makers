@@ -103,7 +103,7 @@ async def human_query_to_sql(human_query: str):
 
     # Detectar cantidad de usuarios con más variaciones
     if "cuántos usuarios hay" in query_lower or "usuarios registrados" in query_lower or "hay" in query_lower and "usuarios registrados" in query_lower:
-        query = "SELECT COUNT(*) FROM productos;"
+        query = "SELECT COUNT(*) FROM usuario;"
         logger.debug(f"Generated SQL query: {query}")
         return query
 
@@ -130,7 +130,7 @@ class PostHumanQueryPayload(BaseModel):
     additionalProps: Dict[str, Any] = {} 
 
     class Config:
-        extra = 'allow'  
+        extra = Extra.allow 
 
 
 
@@ -160,12 +160,13 @@ async def human_query():
         raise HTTPException(status_code=500, detail="Error interno del servidor")
 
 # Ruta GET para leer la raíz
+
 #RUTA DE INICIO
 @app.route("/welcome")
 def welcome():
     return render_template('Welcome.html')
 
-@app.route("/chatbot", methods= ['GET'])
+@app.route("/chatbot")
 def chatbot():
     schema = get_schema()
     sql_query = "SELECT * FROM productos;"

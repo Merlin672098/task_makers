@@ -2,9 +2,10 @@
 <html>
 <head>
 	<title>chatbot</title>
-	<link rel="stylesheet" type="text/css" href="style.css">
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css')}}">
 	<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Allerta+Stencil">
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>      
 </head>
 <body>
         <div class="head">
@@ -23,6 +24,6 @@
         </div>
         <div class="chat-form"><input id="input" type="text" placeholder="say anything..." autocomplete="off"/></div>
     </div>
+    </div>
 </body>
-<script type="text/javascript" src="script.js"></script>
 </html>

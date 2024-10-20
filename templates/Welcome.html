@@ -52,17 +52,13 @@
 </head>
 <body>
 
-<div id="welcome-container">
-    <div id="welcome-header">Bienvenido</div>
-    <button id="welcome-button" onclick="redirectToChatbot()">Ir al Chatbot</button>
-</div>
-
-<script>
-    function redirectToChatbot() {
-        // Redirige a la pantalla del chatbot
-        window.location.href = "chatbot.html";  // Asegúrate de tener esta página HTML
-    }
-</script>
+    <div id="welcome-container">
+        <div id="welcome-header">Bienvenido</div>
+        <!-- Usamos el enlace de Flask para redirigir -->
+        <a href="{{ url_for('chatbot') }}">
+            <button id="welcome-button">Ir al Chatbot</button>
+        </a>
+    </div>
 
 </body>
 </html>
